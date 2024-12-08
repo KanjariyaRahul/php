@@ -2,8 +2,14 @@
 include './includes/connection.php';
 include './includes/header.php';
 
-$query = "select id , name, phone , gender, file, image from users ";
+// $query = "select id , name, phone , gender, file, image from users ";
+$search = isset($_GET['search']) ? $_GET['search'] : '';
 
+$page = isset($_GET['page']) ? (int)$_GET['page']: 1;
+$limit = 10;
+$offset = ($page-1) * $limit;
+
+$query = "SELECT * FROM users WHERE name LIKE '%$search%' LIMIT $limit OFFSET $offset";
 $result = mysqli_query($conn , $query);
 
 ?>
@@ -20,8 +26,12 @@ $result = mysqli_query($conn , $query);
 <body>
     
     <div class="bg-light container mt-3">
-        <h1 class="text-center"> All Record</h1>
 
+        <h1 class="text-center"> All Record</h1>
+        <form class="d-flex" role="search">
+        <input class="form-control me-2" name="search" id= search" type="search" placeholder="Search" value="<?php echo htmlspecialchars($search); ?>">
+        <button class="btn btn-outline-success" type="submit">Search</button>
+      </form>
         <table class="table table-hover p-5">
             <thead class="thead-dark">
                 <th>#</th>
@@ -54,6 +64,10 @@ $result = mysqli_query($conn , $query);
                  ?>
             </tbody>
         </table>
+        <div>
+            <a href="?page=<?php echo  $page-1;?>">previous</a>
+            <a href="?page=<?php echo  $page+1;?>">Next</a>
+        </div>
     </div>
 
 </body>
